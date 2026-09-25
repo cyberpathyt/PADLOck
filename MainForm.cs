@@ -118,6 +118,8 @@ public sealed class MainForm : Form
         DarkChrome.Style(_tips);
 
         Log(SystemSource, $"PADLOck {AppInfo.Version} · {AppInfo.Author} · данные: {AppInfo.DataDir}");
+        foreach (var message in StartupUpdater.Messages)
+            Log(SystemSource, message);
         LoadCatalog();
         UpdateProvisionInfo();
         ApplyMode();
@@ -134,16 +136,12 @@ public sealed class MainForm : Form
         DarkChrome.Cloak(this, true);
     }
 
-    protected override async void OnShown(EventArgs e)
+    protected override void OnShown(EventArgs e)
     {
         base.OnShown(e);
         _backdrop.Rebuild();
         DarkChrome.PaintNow(this);
         DarkChrome.Cloak(this, false);
-
-        // Проверка обновлений после запуска, когда окно уже на экране
-        await Task.Delay(1500);
-        await CheckUpdatesAsync(manual: false);
     }
 
     protected override void Dispose(bool disposing)

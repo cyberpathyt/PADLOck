@@ -9,6 +9,7 @@ public static class AppInfo
 
     // Репозиторий GitHub, из релизов которого берутся обновления программы и APK FreeKiosk
     public const string UpdateRepository = "cyberpathyt/PADLOck";
+    public const string UpdateBranch = "main";
 
     public static string Version { get; } =
         typeof(AppInfo).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion.Split('+')[0]

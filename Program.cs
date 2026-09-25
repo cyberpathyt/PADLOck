@@ -18,6 +18,10 @@ internal static class Program
 
         ApplicationConfiguration.Initialize();
         UI.DarkChrome.Initialize();
+
+        // Сначала проверка обновлений (заставка). Если запущена установка новой версии — выходим, она запустится сама
+        if (!UI.StartupUpdater.Run())
+            return;
         Application.Run(new MainForm());
     }
 

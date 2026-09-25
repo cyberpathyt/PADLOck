@@ -167,11 +167,15 @@ public sealed class KioskProfile
     // (в киоске страницы по http работают плохо)
     public static string NormalizeUrl(string? url)
     {
-        var u = (url ?? "").Trim();
+        // Обратные косые (https:\\site) — частая опечатка при наборе адреса в Windows
+        var u = (url ?? "").Trim().Replace('\\', '/');
         if (u.Length == 0) return u;
-        if (u.StartsWith("https://", StringComparison.OrdinalIgnoreCase)) return "https://" + u[8..];
-        if (u.StartsWith("http://", StringComparison.OrdinalIgnoreCase)) return "https://" + u[7..];
-        if (u.Contains("://")) return u;
+        // https://, http://, https:/, https// и т.п. — схема убирается и ставится правильная
+        var scheme = System.Text.RegularExpressions.Regex.Match(u, @"^(?i)https?(:/*|/+)");
+        if (scheme.Success)
+            u = u[scheme.Length..];
+        else if (u.Contains("://"))
+            return u;
         return "https://" + u.TrimStart('/');
     }
 

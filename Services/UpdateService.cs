@@ -12,15 +12,16 @@ public sealed record ReleaseInfo(SemVersion Version, string Tag, bool Prerelease
                                  UpdateAsset? Installer, UpdateAsset? Apk);
 
 // Обновления из GitHub Releases.
-// Релиз с галочкой «Pre-release» — канал dev, обычный — stable.
-// В релизе: установщик PADLOck-Setup-<версия>.exe и (по желанию) APK FreeKiosk — ровно тот, которым прошивать.
-// Контрольная сумма берётся из поля digest, которое GitHub считает сам, или из файла SHA256SUMS.txt в релизе.
+// API GitHub не используется: без входа он даёт 60 запросов в час на внешний IP, и в офисе их выбирают за минуты.
+// Вместо этого release.ps1 при публикации кладёт в репозиторий описание версии — updates/stable.json и updates/dev.json,
+// а программа читает его обычной ссылкой raw.githubusercontent.com. Установщик и APK скачиваются по прямым ссылкам релиза.
+// dev.json всегда описывает самую новую версию из обоих каналов.
 public sealed class UpdateService
 {
     private static readonly HttpClient Http = CreateClient();
 
-    // Адрес API можно подменить (для проверки на тестовом сервере)
-    public static string ApiBase { get; set; } = "https://api.github.com";
+    // Адрес можно подменить (для проверки на тестовом сервере)
+    public static string RawBase { get; set; } = "https://raw.githubusercontent.com";
 
     private static HttpClient CreateClient()
     {
@@ -31,87 +32,55 @@ public sealed class UpdateService
         return client;
     }
 
-    // Самый новый релиз канала (dev включает и stable). null — релизов нет
+    // Последняя версия канала. null — ещё не было ни одного релиза
     public async Task<ReleaseInfo?> FindLatestAsync(bool dev, CancellationToken ct)
     {
-        using var request = new HttpRequestMessage(HttpMethod.Get, $"{ApiBase}/repos/{AppInfo.UpdateRepository}/releases?per_page=30");
-        request.Headers.Accept.ParseAdd("application/vnd.github+json");
+        var channel = dev ? "dev" : "stable";
+        // Параметр t — чтобы не получить устаревшую копию из кеша
+        var url = $"{RawBase}/{AppInfo.UpdateRepository}/{AppInfo.UpdateBranch}/updates/{channel}.json?t={DateTime.UtcNow.Ticks}";
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(ct);
         timeout.CancelAfter(TimeSpan.FromSeconds(20));
 
-        using var response = await Http.SendAsync(request, timeout.Token);
+        using var response = await Http.GetAsync(url, timeout.Token);
         if (response.StatusCode == HttpStatusCode.NotFound)
-            throw new UpdateException($"репозиторий {AppInfo.UpdateRepository} не найден или закрыт");
-        if (response.StatusCode is HttpStatusCode.Forbidden or HttpStatusCode.TooManyRequests)
-            throw new UpdateException("GitHub временно ограничил запросы с этого адреса — проверка повторится при следующем запуске");
-        response.EnsureSuccessStatusCode();
+            return null;
+        if (!response.IsSuccessStatusCode)
+            throw new UpdateException($"GitHub ответил {(int)response.StatusCode} {response.ReasonPhrase}");
 
-        using var doc = JsonDocument.Parse(await response.Content.ReadAsStringAsync(timeout.Token));
-        ReleaseInfo? best = null;
-        string? bestSums = null;
-        var bestHasManyApks = false;
-        foreach (var r in doc.RootElement.EnumerateArray())
+        var json = await response.Content.ReadAsStringAsync(timeout.Token);
+        try
         {
-            if (r.GetProperty("draft").GetBoolean()) continue;
-            var prerelease = r.GetProperty("prerelease").GetBoolean();
-            if (prerelease && !dev) continue;
-
-            var tag = r.GetProperty("tag_name").GetString() ?? "";
-            if (!SemVersion.TryParse(tag, out var version)) continue;
-
-            UpdateAsset? installer = null, apk = null;
-            string? sums = null;
-            var apkCount = 0;
-            foreach (var a in r.GetProperty("assets").EnumerateArray())
-            {
-                var name = a.GetProperty("name").GetString() ?? "";
-                var url = a.GetProperty("browser_download_url").GetString() ?? "";
-                var size = a.GetProperty("size").GetInt64();
-                var digest = a.TryGetProperty("digest", out var d) && d.ValueKind == JsonValueKind.String ? d.GetString() : null;
-                var sha = digest is not null && digest.StartsWith("sha256:", StringComparison.OrdinalIgnoreCase) ? digest[7..].ToLowerInvariant() : null;
-                var asset = new UpdateAsset(name, url, size, sha);
-
-                if (name.StartsWith("PADLOck-Setup", StringComparison.OrdinalIgnoreCase) && name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
-                    installer = asset;
-                else if (name.EndsWith(".apk", StringComparison.OrdinalIgnoreCase))
-                {
-                    apk = asset;
-                    apkCount++;
-                }
-                else if (name.Equals("SHA256SUMS.txt", StringComparison.OrdinalIgnoreCase))
-                    sums = url;
-            }
-
-            var info = new ReleaseInfo(version, tag, prerelease, r.TryGetProperty("body", out var b) ? b.GetString() ?? "" : "",
-                                       r.GetProperty("html_url").GetString() ?? "", installer, apk);
-            if (best is null || version.CompareTo(best.Version) > 0)
-            {
-                best = info;
-                bestSums = sums;
-                bestHasManyApks = apkCount > 1;
-            }
+            return ParseManifest(json);
         }
-
-        // Непонятно, каким APK прошивать — такой релиз не берём
-        if (bestHasManyApks)
-            throw new UpdateException($"в релизе {best!.Tag} больше одного APK — оставьте один");
-
-        // Суммы из SHA256SUMS.txt — для файлов, у которых GitHub не посчитал digest
-        if (best is not null && bestSums is { } sumsUrl
-            && (best.Installer is { Sha256: null } || best.Apk is { Sha256: null }))
+        catch (Exception ex) when (ex is JsonException or KeyNotFoundException or InvalidOperationException or FormatException)
         {
-            var sums = ParseSums(await Http.GetStringAsync(sumsUrl, timeout.Token));
-            best = best with
-            {
-                Installer = WithSum(best.Installer, sums),
-                Apk = WithSum(best.Apk, sums)
-            };
+            throw new UpdateException($"описание версии updates/{channel}.json повреждено");
         }
-        return best;
     }
 
-    private static UpdateAsset? WithSum(UpdateAsset? a, Dictionary<string, string> sums) =>
-        a is { Sha256: null } && sums.TryGetValue(a.Name, out var s) ? a with { Sha256 = s } : a;
+    public static ReleaseInfo ParseManifest(string json)
+    {
+        using var doc = JsonDocument.Parse(json);
+        var r = doc.RootElement;
+        var tag = r.GetProperty("tag").GetString() ?? "";
+        if (!SemVersion.TryParse(r.GetProperty("version").GetString(), out var version))
+            throw new FormatException("version");
+        return new ReleaseInfo(version, tag,
+            r.TryGetProperty("prerelease", out var pre) && pre.ValueKind == JsonValueKind.True,
+            r.TryGetProperty("notes", out var n) ? n.GetString() ?? "" : "",
+            r.TryGetProperty("page", out var page) ? page.GetString() ?? "" : "",
+            Asset(r, "installer"), Asset(r, "apk"));
+    }
+
+    private static UpdateAsset? Asset(JsonElement root, string name)
+    {
+        if (!root.TryGetProperty(name, out var a) || a.ValueKind != JsonValueKind.Object)
+            return null;
+        var sha = a.TryGetProperty("sha256", out var s) ? s.GetString()?.Trim().ToLowerInvariant() : null;
+        return new UpdateAsset(a.GetProperty("name").GetString() ?? "", a.GetProperty("url").GetString() ?? "",
+                               a.TryGetProperty("size", out var size) ? size.GetInt64() : 0,
+                               sha is { Length: 64 } ? sha : null);
+    }
 
     // Формат sha256sum / Get-FileHash: «<hex>  <имя>» или «<hex> *<имя>»
     public static Dictionary<string, string> ParseSums(string text)
@@ -129,7 +98,7 @@ public sealed class UpdateService
     public async Task DownloadAsync(UpdateAsset asset, string destination, IProgress<(long Done, long Total)> progress, CancellationToken ct)
     {
         if (asset.Sha256 is null)
-            throw new UpdateException($"у файла {asset.Name} нет контрольной суммы (digest или SHA256SUMS.txt) — скачивание небезопасно");
+            throw new UpdateException($"у файла {asset.Name} нет контрольной суммы — скачивание небезопасно");
 
         Directory.CreateDirectory(Path.GetDirectoryName(destination)!);
         var part = destination + ".part";
