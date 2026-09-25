@@ -17,6 +17,7 @@ internal static class Program
         };
 
         ApplicationConfiguration.Initialize();
+        UI.DarkChrome.Initialize();
         Application.Run(new MainForm());
     }
 

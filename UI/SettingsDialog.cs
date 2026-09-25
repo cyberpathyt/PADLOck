@@ -32,7 +32,7 @@ public sealed class SettingsDialog : DarkDialog
     // Киоск
     private readonly TextBox _apkFolder = new() { PlaceholderText = "по умолчанию — APK из релиза программы (приходит с обновлением)" };
     private readonly ComboBox _mode = new() { DropDownStyle = ComboBoxStyle.DropDownList };
-    private readonly TextBox _url = new() { PlaceholderText = "https://..." };
+    private readonly TextBox _url = new() { PlaceholderText = "адрес сайта — https:// подставится сам" };
     private readonly TextBox _app = new() { PlaceholderText = "com.example.app" };
     private readonly TextBox _pin = new() { UseSystemPasswordChar = true, MaxLength = 6 };
     private readonly ComboBox _backMode = new() { DropDownStyle = ComboBoxStyle.DropDownList };
@@ -135,6 +135,7 @@ public sealed class SettingsDialog : DarkDialog
                                               _timeZone, _language, _ntp, _broker, _mqttUser, _mqttPassword, _baseTopic, _packages })
             Theme.StyleInput(input);
 
+        _url.Leave += (_, _) => { if (_url.Text.Trim().Length > 0) _url.Text = KioskProfile.NormalizeUrl(_url.Text); };
         _showPassword.CheckedChanged += (_, _) => _password.UseSystemPasswordChar = !_showPassword.Checked;
         _mode.SelectedIndexChanged += (_, _) => UpdateEnabled();
         _statusBar.CheckedChanged += (_, _) => UpdateEnabled();
@@ -330,7 +331,7 @@ public sealed class SettingsDialog : DarkDialog
         var p = _profile.Clone();
         p.ApkFolder = _apkFolder.Text.Trim();
         p.KioskMode = Modes[Math.Max(0, _mode.SelectedIndex)].Value;
-        p.KioskUrl = _url.Text.Trim();
+        p.KioskUrl = KioskProfile.NormalizeUrl(_url.Text);
         p.KioskApp = _app.Text.Trim();
         p.KioskPin = _pin.Text.Trim();
         p.BackButtonMode = BackModes[Math.Max(0, _backMode.SelectedIndex)].Value;
@@ -373,7 +374,7 @@ public sealed class SettingsDialog : DarkDialog
         var error = CheckProfile(p);
         if (error is not null)
         {
-            MessageBox.Show(this, error, Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            Dialogs.Show(this, error, Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return;
         }
 
@@ -385,8 +386,9 @@ public sealed class SettingsDialog : DarkDialog
 
     private static string? CheckProfile(KioskProfile p)
     {
-        if (p.KioskMode == "web" && p.KioskUrl.Length > 0 && !Uri.TryCreate(p.KioskUrl, UriKind.Absolute, out _))
-            return "Адрес страницы должен начинаться с http:// или https://";
+        if (p.KioskMode == "web" && p.KioskUrl.Length > 0
+            && (!Uri.TryCreate(p.KioskUrl, UriKind.Absolute, out var uri) || uri.Host.Length == 0))
+            return "Не похоже на адрес сайта. Пример: kiosk.example.local или 172.16.0.10/page";
         if ((p.KioskConfigured || p.MqttEnabled) && (p.KioskPin.Length is < 4 or > 6 || !p.KioskPin.All(char.IsDigit)))
             return "Для настройки киоска и мониторинга нужен PIN из 4–6 цифр.";
         if (p.MqttEnabled && p.MqttBroker.Length == 0)

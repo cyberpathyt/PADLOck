@@ -313,7 +313,7 @@ public sealed class InstructionsForm : DarkDialog
         }
         catch (Exception ex)
         {
-            MessageBox.Show(this, ex.Message, Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            Dialogs.Show(this, ex.Message, Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
     }
 }

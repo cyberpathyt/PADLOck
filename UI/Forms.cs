@@ -10,50 +10,27 @@ public class DarkDialog : Form
         Icon = Forms.AppIcon;
     }
 
-    private const uint RDW_INVALIDATE = 0x0001, RDW_ERASE = 0x0004, RDW_ALLCHILDREN = 0x0080, RDW_UPDATENOW = 0x0100;
+    // Окно появляется на экране только полностью нарисованным: до этого Windows держит его скрытым (DWM cloak).
+    // Так не видно, как таблицы и поля дорисовываются кусками
+    protected override void OnHandleCreated(EventArgs e)
+    {
+        base.OnHandleCreated(e);
+        DarkChrome.TitleBar(this);
+        DarkChrome.Cloak(this, true);
+    }
 
-    [System.Runtime.InteropServices.DllImport("user32.dll")]
-    private static extern bool RedrawWindow(IntPtr hWnd, IntPtr rect, IntPtr region, uint flags);
-
-    private System.Windows.Forms.Timer? _fade;
-
-    // Окно показывается только после того, как полностью нарисовано, и плавно проявляется.
-    // Без этого большие таблицы видно, как они дорисовываются сверху вниз
     protected override void OnLoad(EventArgs e)
     {
         Theme.EnableDoubleBuffering(this);
-        Opacity = 0;
+        DarkChrome.ApplyTree(this);
         base.OnLoad(e);
     }
 
     protected override void OnShown(EventArgs e)
     {
         base.OnShown(e);
-        RedrawWindow(Handle, IntPtr.Zero, IntPtr.Zero, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_UPDATENOW);
-        _fade = new System.Windows.Forms.Timer { Interval = 15 };
-        _fade.Tick += (_, _) =>
-        {
-            var next = Opacity + 0.2;
-            if (next >= 1)
-            {
-                Opacity = 1;
-                _fade?.Stop();
-                _fade?.Dispose();
-                _fade = null;
-            }
-            else
-            {
-                Opacity = next;
-            }
-        };
-        _fade.Start();
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        if (disposing)
-            _fade?.Dispose();
-        base.Dispose(disposing);
+        DarkChrome.PaintNow(this);
+        DarkChrome.Cloak(this, false);
     }
 }
 

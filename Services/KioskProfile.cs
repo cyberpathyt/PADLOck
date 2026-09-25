@@ -163,6 +163,18 @@ public sealed class KioskProfile
         return changed;
     }
 
+    // Адрес страницы киоска всегда по https: без схемы — дописывается https://, http:// меняется на https://
+    // (в киоске страницы по http работают плохо)
+    public static string NormalizeUrl(string? url)
+    {
+        var u = (url ?? "").Trim();
+        if (u.Length == 0) return u;
+        if (u.StartsWith("https://", StringComparison.OrdinalIgnoreCase)) return "https://" + u[8..];
+        if (u.StartsWith("http://", StringComparison.OrdinalIgnoreCase)) return "https://" + u[7..];
+        if (u.Contains("://")) return u;
+        return "https://" + u.TrimStart('/');
+    }
+
     // Настройки FreeKiosk в формате его ADB-конфигурации (--es config)
     public string KioskJson()
     {
@@ -191,7 +203,7 @@ public sealed class KioskProfile
         else
         {
             c["display_mode"] = "webview";
-            c["url"] = KioskUrl.Trim();
+            c["url"] = NormalizeUrl(KioskUrl);
         }
         return JsonSerializer.Serialize(c, ConfigJsonOptions);
     }

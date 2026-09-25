@@ -143,6 +143,8 @@ public sealed class UpdateDialog : DarkDialog
             BackColor = Theme.BaseBottom;
         }
 
+        [System.ComponentModel.Browsable(false)]
+        [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
         public double Value
         {
             get => _value;

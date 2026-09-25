@@ -44,12 +44,12 @@ public sealed class WifiDialog : DarkDialog
         {
             if (Ssid.Length == 0)
             {
-                MessageBox.Show(this, "Укажите имя сети.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Dialogs.Show(this, "Укажите имя сети.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
             if (Security != "open" && Password.Length < 8)
             {
-                MessageBox.Show(this, "Пароль сети WPA — не короче 8 символов.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Dialogs.Show(this, "Пароль сети WPA — не короче 8 символов.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
             DialogResult = DialogResult.OK;
@@ -76,7 +76,7 @@ public sealed class WifiDialog : DarkDialog
 // Кнопка «Заменить URL»: только адрес страницы киоска
 public sealed class UrlDialog : DarkDialog
 {
-    private readonly TextBox _url = new() { PlaceholderText = "https://..." };
+    private readonly TextBox _url = new() { PlaceholderText = "адрес сайта — https:// подставится сам" };
     private readonly CheckBox _save = Forms.Check("Сохранить в настройках прошивки");
 
     public UrlDialog(KioskProfile profile, int deviceCount)
@@ -97,9 +97,10 @@ public sealed class UrlDialog : DarkDialog
         var ok = Theme.CreateButton("Применить", ButtonKind.Primary);
         ok.Click += (_, _) =>
         {
-            if (!Uri.TryCreate(Url, UriKind.Absolute, out var uri) || (uri.Scheme != "http" && uri.Scheme != "https"))
+            _url.Text = Url;
+            if (!Uri.TryCreate(Url, UriKind.Absolute, out var uri) || uri.Scheme != "https" || uri.Host.Length == 0)
             {
-                MessageBox.Show(this, "Адрес должен начинаться с http:// или https://", Text,
+                Dialogs.Show(this, "Не похоже на адрес сайта. Пример: kiosk.example.local или 172.16.0.10/page", Text,
                                 MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
@@ -110,13 +111,14 @@ public sealed class UrlDialog : DarkDialog
         cancel.DialogResult = DialogResult.Cancel;
 
         Theme.StyleInput(_url);
+        _url.Leave += (_, _) => _url.Text = Url;
         Controls.Add(form);
         Controls.Add(Forms.ButtonBar(ok, cancel));
         AcceptButton = ok;
         CancelButton = cancel;
     }
 
-    public string Url => _url.Text.Trim();
+    public string Url => KioskProfile.NormalizeUrl(_url.Text);
     public bool SaveToProfile => _save.Checked;
 }
 

@@ -423,7 +423,7 @@ public sealed class KioskProvisioner
     // Только адрес страницы: остальные настройки киоска не трогаются
     private async Task<bool> UrlAsync()
     {
-        var url = _profile.KioskUrl.Trim();
+        var url = KioskProfile.NormalizeUrl(_profile.KioskUrl);
         if (url.Length == 0)
         {
             _log("  адрес не задан");

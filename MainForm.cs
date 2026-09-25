@@ -114,6 +114,8 @@ public sealed class MainForm : Form
         WireEvents();
         ResumeLayout(true);
         Theme.EnableDoubleBuffering(this);
+        DarkChrome.ApplyTree(this);
+        DarkChrome.Style(_tips);
 
         Log(SystemSource, $"PADLOck {AppInfo.Version} · {AppInfo.Author} · данные: {AppInfo.DataDir}");
         LoadCatalog();
@@ -124,11 +126,20 @@ public sealed class MainForm : Form
     protected override void OnPaintBackground(PaintEventArgs e) =>
         _backdrop.Paint(e.Graphics, this, e.ClipRectangle);
 
+    // Главное окно тоже показывается только полностью нарисованным
+    protected override void OnHandleCreated(EventArgs e)
+    {
+        base.OnHandleCreated(e);
+        DarkChrome.TitleBar(this);
+        DarkChrome.Cloak(this, true);
+    }
+
     protected override async void OnShown(EventArgs e)
     {
         base.OnShown(e);
         _backdrop.Rebuild();
-        Invalidate(true);
+        DarkChrome.PaintNow(this);
+        DarkChrome.Cloak(this, false);
 
         // Проверка обновлений после запуска, когда окно уже на экране
         await Task.Delay(1500);
@@ -455,14 +466,14 @@ public sealed class MainForm : Form
             if (!AdbClient.AdbExists)
             {
                 Log(SystemSource, $"Не найден adb: {AdbClient.AdbPath}");
-                MessageBox.Show(this, $"Не найден adb.exe:\n{AdbClient.AdbPath}\n\nПереустановите программу.",
+                Dialogs.Show(this, $"Не найден adb.exe:\n{AdbClient.AdbPath}\n\nПереустановите программу.",
                                 "PADLOck", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             if (_profile.SecretsUnreadable)
             {
                 Log(SystemSource, "Пароли в настройках прошивки не удалось расшифровать — их нужно ввести заново");
-                MessageBox.Show(this,
+                Dialogs.Show(this,
                     "Пароли в настройках прошивки (Wi-Fi, PIN, MQTT) сохранены другим пользователем Windows " +
                     "или на другом компьютере, поэтому их нельзя расшифровать.\n\nВведите их заново в «Настройки прошивки».",
                     "PADLOck", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -571,7 +582,7 @@ public sealed class MainForm : Form
     {
         if (!_settings.AdvancedMode)
         {
-            var answer = MessageBox.Show(this,
+            var answer = Dialogs.Show(this,
                 "В расширенном режиме доступно ручное удаление и отключение любых пакетов.\n\n" +
                 "Удаление системных компонентов может сделать планшет незагружаемым до сброса к заводским настройкам.\n\n" +
                 "Включить расширенный режим?",
@@ -621,14 +632,14 @@ public sealed class MainForm : Form
     {
         if (_reference is null)
         {
-            MessageBox.Show(this, "Подключите планшет.", "PADLOck", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            Dialogs.Show(this, "Подключите планшет.", "PADLOck", MessageBoxButtons.OK, MessageBoxIcon.Information);
             return;
         }
 
         var unknown = _packages.Where(p => p.Info.Category == PackageCategory.Unknown).Select(p => p.Name).ToList();
         if (unknown.Count == 0)
         {
-            MessageBox.Show(this, "Все пакеты этого планшета уже есть в базах.", "PADLOck", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            Dialogs.Show(this, "Все пакеты этого планшета уже есть в базах.", "PADLOck", MessageBoxButtons.OK, MessageBoxIcon.Information);
             return;
         }
 
@@ -977,7 +988,7 @@ public sealed class MainForm : Form
     private bool NoDevicesSelected(List<Device> devices)
     {
         if (devices.Count > 0) return false;
-        MessageBox.Show(this, "Отметьте хотя бы один подключённый планшет.", "PADLOck",
+        Dialogs.Show(this, "Отметьте хотя бы один подключённый планшет.", "PADLOck",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
         return true;
     }
@@ -990,7 +1001,7 @@ public sealed class MainForm : Form
         var devices = TargetDevices();
         if (selected.Count == 0 || devices.Count == 0)
         {
-            MessageBox.Show(this, "Отметьте хотя бы один пакет и хотя бы один планшет.", "PADLOck",
+            Dialogs.Show(this, "Отметьте хотя бы один пакет и хотя бы один планшет.", "PADLOck",
                             MessageBoxButtons.OK, MessageBoxIcon.Information);
             return;
         }
@@ -1010,7 +1021,7 @@ public sealed class MainForm : Form
             question += "\n\nДействие обратимо кнопкой «Восстановить».";
         }
 
-        if (MessageBox.Show(this, question, "Подтверждение", MessageBoxButtons.YesNo,
+        if (Dialogs.Show(this, question, "Подтверждение", MessageBoxButtons.YesNo,
                             action == PackageAction.Restore ? MessageBoxIcon.Question : MessageBoxIcon.Warning) != DialogResult.Yes)
             return;
 
@@ -1085,7 +1096,7 @@ public sealed class MainForm : Form
         if (NoDevicesSelected(devices)) return;
 
         var names = string.Join("\n", files.Select(Path.GetFileName));
-        if (MessageBox.Show(this, $"Установить на планшетов: {devices.Count}?\n\n{names}", "Установка APK",
+        if (Dialogs.Show(this, $"Установить на планшетов: {devices.Count}?\n\n{names}", "Установка APK",
                             MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
             return;
 
@@ -1231,7 +1242,7 @@ public sealed class MainForm : Form
 
         var names = string.Join("\n", devices.Take(10).Select(d => "• " + d.DisplayName));
         if (devices.Count > 10) names += $"\n… и ещё {devices.Count - 10}";
-        if (MessageBox.Show(this,
+        if (Dialogs.Show(this,
                 $"Сбросить к заводским настройкам планшетов: {devices.Count}?\n\n{names}\n\nВсе данные и настройки на них будут удалены.",
                 "Сброс к заводским", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) != DialogResult.Yes)
             return;
@@ -1250,7 +1261,7 @@ public sealed class MainForm : Form
 
         var recovery = needRecovery.Count(x => x);
         if (recovery > 0)
-            MessageBox.Show(this,
+            Dialogs.Show(this,
                 $"Планшетов в режиме восстановления (recovery): {recovery}.\n\n" +
                 "На экране каждого планшета: кнопки громкости — выбор, кнопка питания — подтверждение.\n\n" +
                 "1. Wipe data/factory reset → подтвердите (Factory data reset / Yes).\n" +
@@ -1337,14 +1348,14 @@ public sealed class MainForm : Form
                 var reason = ex is UpdateException ? ex.Message : $"нет связи с GitHub ({ex.Message})";
                 Log(SystemSource, "Обновления: " + reason);
                 if (manual)
-                    MessageBox.Show(this, "Не удалось проверить обновления:\n" + reason, "Обновления", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    Dialogs.Show(this, "Не удалось проверить обновления:\n" + reason, "Обновления", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             if (release is null)
             {
                 Log(SystemSource, $"Обновления: в канале {channel} релизов нет");
                 if (manual)
-                    MessageBox.Show(this, $"В канале {channel} пока нет релизов.", "Обновления", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    Dialogs.Show(this, $"В канале {channel} пока нет релизов.", "Обновления", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
@@ -1365,7 +1376,7 @@ public sealed class MainForm : Form
             if (manual && !newer && !apkUpdated)
             {
                 var apk = _profile.FindNewestApk();
-                MessageBox.Show(this,
+                Dialogs.Show(this,
                     $"Установлена последняя версия PADLOck {AppInfo.Version} (канал {channel}).\n" +
                     $"FreeKiosk для прошивки: {(apk is null ? "нет" : Path.GetFileName(apk))}",
                     "Обновления", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -1418,7 +1429,7 @@ public sealed class MainForm : Form
         catch (Exception ex)
         {
             Log(SystemSource, "Обновления: установщик не запустился — " + ex.Message);
-            MessageBox.Show(this, "Не удалось запустить установку обновления:\n" + ex.Message, "Обновления",
+            Dialogs.Show(this, "Не удалось запустить установку обновления:\n" + ex.Message, "Обновления",
                             MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return false;
         }
@@ -1552,7 +1563,7 @@ public sealed class MainForm : Form
     {
         var apk = _profile.FindNewestApk();
         if (apk is null)
-            MessageBox.Show(this, "Нет APK FreeKiosk.\n\nОн скачивается вместе с обновлением программы: «Обновления → Проверить обновления». " +
+            Dialogs.Show(this, "Нет APK FreeKiosk.\n\nОн скачивается вместе с обновлением программы: «Обновления → Проверить обновления». " +
                                   "Либо укажите свою папку с APK в «Настройки прошивки → Киоск».",
                             "PADLOck", MessageBoxButtons.OK, MessageBoxIcon.Information);
         return apk;
@@ -1604,7 +1615,7 @@ public sealed class MainForm : Form
             var notOwned = devices.Where((d, i) => owners[i] != KioskProvisioner.KioskPackage).ToList();
             if (notOwned.Count > 0)
             {
-                var answer = MessageBox.Show(this,
+                var answer = Dialogs.Show(this,
                     $"Не прошиты (FreeKiosk не владелец устройства): {string.Join(", ", notOwned.Select(d => d.Title))}.\n\n" +
                     "Без этого киоск на них не будет заблокирован.\n\n" +
                     "Да — добавить им установку FreeKiosk и Device Owner\n" +
@@ -1688,7 +1699,7 @@ public sealed class MainForm : Form
     {
         if (_profile.KioskPin.Length > 0)
             return true;
-        MessageBox.Show(this, "Нужен PIN киоска — укажите его в «Настройки прошивки → Киоск».", "PADLOck",
+        Dialogs.Show(this, "Нужен PIN киоска — укажите его в «Настройки прошивки → Киоск».", "PADLOck",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
         return false;
     }
@@ -1719,12 +1730,11 @@ public sealed class MainForm : Form
 
         if (!verify && !StopRequested)
         {
-            var failed = runs.Where(r => r.Failed).Select(r => r.Device.DisplayName).ToList();
-            MessageBox.Show(this,
-                failed.Count == 0
-                    ? $"{activity}: готово на планшетах — {runs.Count}."
-                    : $"{activity}: ошибки на планшетах — {failed.Count} из {runs.Count}:\n{string.Join("\n", failed)}\n\nПодробности — в журнале.",
-                "PADLOck", MessageBoxButtons.OK, failed.Count == 0 ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
+            var ok = runs.All(r => !r.Failed);
+            Dialogs.Result(this,
+                ok ? "Изменения прошли успешно" : "Изменения применены не везде",
+                ok ? "" : "Подробности по планшетам с ошибкой — в журнале.",
+                runs.Select(r => new ResultRow(r.Device.DisplayName, r.Failed ? "Ошибка" : "Готово", !r.Failed)).ToList());
         }
         await LoadPackagesAsync();
     }
@@ -1871,8 +1881,8 @@ public sealed class MainForm : Form
 
         if (bad.Count == 0)
         {
-            MessageBox.Show(this, $"Готово: планшетов прошито и проверено — {results.Count}.", "PADLOck",
-                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+            Dialogs.Result(this, "Изменения прошли успешно", "Планшеты прошиты и проверены.",
+                results.Select(r => new ResultRow(r.Device, "Проверено", true)).ToList());
             return;
         }
         using var dialog = new CheckResultsDialog(results);
