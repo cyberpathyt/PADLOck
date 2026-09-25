@@ -27,7 +27,7 @@ internal sealed class StartupSplash : DarkDialog
     private readonly Label _status = new() { AutoSize = false, ForeColor = Theme.TextColor, Font = Theme.BoldFont };
     private readonly Label _details = new() { AutoSize = false, ForeColor = Theme.Muted, Font = Theme.SmallFont };
     private readonly ProgressLine _bar = new() { Visible = false };
-    private readonly UpdateService _service = new();
+    private UpdateService _service = new();
 
     public StartupSplash()
     {
@@ -97,6 +97,8 @@ internal sealed class StartupSplash : DarkDialog
         try
         {
             using var timeout = new CancellationTokenSource(CheckTimeout);
+            _service = new UpdateService(settings.EffectiveUpdateSource);
+            _status.Text = $"Проверка обновлений ({UpdateService.SourceName(settings.EffectiveUpdateSource)})…";
             release = await _service.FindLatestAsync(settings.UpdateDevChannel, timeout.Token);
         }
         catch (Exception ex)
@@ -104,8 +106,8 @@ internal sealed class StartupSplash : DarkDialog
             var reason = ex switch
             {
                 UpdateException => ex.Message,
-                OperationCanceledException => "GitHub не ответил за 6 секунд",
-                _ => "нет связи с GitHub"
+                OperationCanceledException => $"{UpdateService.SourceName(settings.EffectiveUpdateSource)} не ответил за 6 секунд",
+                _ => $"нет связи ({UpdateService.SourceName(settings.EffectiveUpdateSource)}): " + UpdateService.Describe(ex)
             };
             StartupUpdater.Messages.Add($"Обновления: проверить не удалось — {reason}");
             return;
@@ -229,7 +231,7 @@ internal sealed class StartupSplash : DarkDialog
 
     private async Task ShowFailureAsync(string what, Exception ex)
     {
-        var reason = ex.Message;
+        var reason = UpdateService.Describe(ex);
         StartupUpdater.Messages.Add($"Обновления: {what} — {reason}");
         _status.Text = what;
         _status.ForeColor = Theme.DangerText;

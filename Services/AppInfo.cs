@@ -11,6 +11,41 @@ public static class AppInfo
     public const string UpdateRepository = "cyberpathyt/PADLOck";
     public const string UpdateBranch = "main";
 
+    // Сервер обновлений во внутренней сети. Адрес и корневой сертификат лежат рядом с программой
+    // (update-server.txt, update-ca.crt) — в репозиторий на GitHub они не попадают
+    public static string? UpdateServerUrl { get; } = ReadUpdateServer();
+    public static bool HasUpdateServer => UpdateServerUrl is not null;
+
+    private static string? ReadUpdateServer()
+    {
+        try
+        {
+            var path = Path.Combine(ProgramDir, "update-server.txt");
+            var line = File.Exists(path) ? File.ReadLines(path).Select(l => l.Trim()).FirstOrDefault(l => l.Length > 0 && !l.StartsWith('#')) : null;
+            if (string.IsNullOrEmpty(line)) return null;
+            return line.Contains("://") ? line.TrimEnd('/') : "https://" + line.TrimEnd('/');
+        }
+        catch (IOException)
+        {
+            return null;
+        }
+    }
+
+    public static System.Security.Cryptography.X509Certificates.X509Certificate2? LoadUpdateServerCa()
+    {
+        try
+        {
+            var path = Path.Combine(ProgramDir, "update-ca.crt");
+            return File.Exists(path)
+                ? System.Security.Cryptography.X509Certificates.X509Certificate2.CreateFromPem(File.ReadAllText(path))
+                : null;
+        }
+        catch (Exception ex) when (ex is IOException or System.Security.Cryptography.CryptographicException)
+        {
+            return null;
+        }
+    }
+
     public static string Version { get; } =
         typeof(AppInfo).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion.Split('+')[0]
         ?? typeof(AppInfo).Assembly.GetName().Version?.ToString(3)

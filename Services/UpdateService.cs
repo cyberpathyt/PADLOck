@@ -1,33 +1,63 @@
 using System.Net;
 using System.Net.Http.Headers;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace PADLOck.Services;
 
+public enum UpdateSource { Server, GitHub }
+
 public sealed record UpdateAsset(string Name, string Url, long Size, string? Sha256);
 
 public sealed record ReleaseInfo(SemVersion Version, string Tag, bool Prerelease, string Notes, string PageUrl,
                                  UpdateAsset? Installer, UpdateAsset? Apk);
 
-// Обновления из GitHub Releases.
-// API GitHub не используется: без входа он даёт 60 запросов в час на внешний IP, и в офисе их выбирают за минуты.
-// Вместо этого release.ps1 при публикации кладёт в репозиторий описание версии — updates/stable.json и updates/dev.json,
-// а программа читает его обычной ссылкой raw.githubusercontent.com. Установщик и APK скачиваются по прямым ссылкам релиза.
+// Обновления программы и APK FreeKiosk. Два источника с одинаковым форматом описания версии:
+//  • сервер PADLOck Hub во внутренней сети: https://<сервер>/updates/stable.json и dev.json;
+//  • GitHub: updates/*.json в репозитории (raw.githubusercontent.com) и файлы релиза.
+//    С рабочих компьютеров *.githubusercontent.com бывает недоступен, поэтому по умолчанию — сервер.
+// API GitHub не используется: без входа он даёт 60 запросов в час на внешний адрес всего офиса.
 // dev.json всегда описывает самую новую версию из обоих каналов.
 public sealed class UpdateService
 {
     private static readonly HttpClient Http = CreateClient();
 
-    // Адрес можно подменить (для проверки на тестовом сервере)
+    // Адреса можно подменить (для проверки на тестовом сервере)
     public static string RawBase { get; set; } = "https://raw.githubusercontent.com";
+    public static string? ServerBase { get; set; } = AppInfo.UpdateServerUrl;
+    public static X509Certificate2? ServerCa { get; set; } = AppInfo.LoadUpdateServerCa();
+
+    private readonly UpdateSource _source;
+
+    public UpdateService(UpdateSource source = UpdateSource.GitHub) => _source = source;
+
+    public static string SourceName(UpdateSource s) => s == UpdateSource.Server ? "сервер PADLOck Hub" : "GitHub";
 
     private static HttpClient CreateClient()
     {
         // Корпоративный прокси с авторизацией Windows
         HttpClient.DefaultProxy.Credentials = CredentialCache.DefaultCredentials;
-        var client = new HttpClient(new HttpClientHandler { UseDefaultCredentials = false }) { Timeout = Timeout.InfiniteTimeSpan };
+        var handler = new HttpClientHandler
+        {
+            UseDefaultCredentials = false,
+            // Сертификат нашего сервера выпущен его собственным центром сертификации (update-ca.crt рядом с программой).
+            // Ему доверяем только для этого центра; остальным сайтам — как обычно, по сертификатам Windows
+            ServerCertificateCustomValidationCallback = (_, cert, _, errors) =>
+            {
+                if (errors == SslPolicyErrors.None) return true;
+                if (cert is null || ServerCa is null || (errors & SslPolicyErrors.RemoteCertificateNameMismatch) != 0)
+                    return false;
+                using var chain = new X509Chain();
+                chain.ChainPolicy.TrustMode = X509ChainTrustMode.CustomRootTrust;
+                chain.ChainPolicy.CustomTrustStore.Add(ServerCa);
+                chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+                return chain.Build(cert);
+            }
+        };
+        var client = new HttpClient(handler) { Timeout = Timeout.InfiniteTimeSpan };
         client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(AppInfo.Name, AppInfo.Version.Replace('+', '.')));
         return client;
     }
@@ -36,8 +66,18 @@ public sealed class UpdateService
     public async Task<ReleaseInfo?> FindLatestAsync(bool dev, CancellationToken ct)
     {
         var channel = dev ? "dev" : "stable";
-        // Параметр t — чтобы не получить устаревшую копию из кеша
-        var url = $"{RawBase}/{AppInfo.UpdateRepository}/{AppInfo.UpdateBranch}/updates/{channel}.json?t={DateTime.UtcNow.Ticks}";
+        string url;
+        if (_source == UpdateSource.Server)
+        {
+            if (string.IsNullOrWhiteSpace(ServerBase))
+                throw new UpdateException("адрес сервера обновлений не задан (update-server.txt) — выберите GitHub в меню «Обновления»");
+            url = $"{ServerBase.TrimEnd('/')}/updates/{channel}.json";
+        }
+        else
+        {
+            // Параметр t — чтобы не получить устаревшую копию из кеша
+            url = $"{RawBase}/{AppInfo.UpdateRepository}/{AppInfo.UpdateBranch}/updates/{channel}.json?t={DateTime.UtcNow.Ticks}";
+        }
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(ct);
         timeout.CancelAfter(TimeSpan.FromSeconds(20));
 
@@ -45,12 +85,12 @@ public sealed class UpdateService
         if (response.StatusCode == HttpStatusCode.NotFound)
             return null;
         if (!response.IsSuccessStatusCode)
-            throw new UpdateException($"GitHub ответил {(int)response.StatusCode} {response.ReasonPhrase}");
+            throw new UpdateException($"{SourceName(_source)} ответил {(int)response.StatusCode} {response.ReasonPhrase}");
 
         var json = await response.Content.ReadAsStringAsync(timeout.Token);
         try
         {
-            return ParseManifest(json);
+            return ParseManifest(json, new Uri(url));
         }
         catch (Exception ex) when (ex is JsonException or KeyNotFoundException or InvalidOperationException or FormatException)
         {
@@ -58,7 +98,8 @@ public sealed class UpdateService
         }
     }
 
-    public static ReleaseInfo ParseManifest(string json)
+    // Ссылки на файлы могут быть относительными (files/…) — тогда от адреса самого описания
+    public static ReleaseInfo ParseManifest(string json, Uri? baseUri = null)
     {
         using var doc = JsonDocument.Parse(json);
         var r = doc.RootElement;
@@ -69,15 +110,18 @@ public sealed class UpdateService
             r.TryGetProperty("prerelease", out var pre) && pre.ValueKind == JsonValueKind.True,
             r.TryGetProperty("notes", out var n) ? n.GetString() ?? "" : "",
             r.TryGetProperty("page", out var page) ? page.GetString() ?? "" : "",
-            Asset(r, "installer"), Asset(r, "apk"));
+            Asset(r, "installer", baseUri), Asset(r, "apk", baseUri));
     }
 
-    private static UpdateAsset? Asset(JsonElement root, string name)
+    private static UpdateAsset? Asset(JsonElement root, string name, Uri? baseUri)
     {
         if (!root.TryGetProperty(name, out var a) || a.ValueKind != JsonValueKind.Object)
             return null;
         var sha = a.TryGetProperty("sha256", out var s) ? s.GetString()?.Trim().ToLowerInvariant() : null;
-        return new UpdateAsset(a.GetProperty("name").GetString() ?? "", a.GetProperty("url").GetString() ?? "",
+        var url = a.GetProperty("url").GetString() ?? "";
+        if (baseUri is not null && Uri.TryCreate(baseUri, url, out var absolute))
+            url = absolute.ToString();
+        return new UpdateAsset(a.GetProperty("name").GetString() ?? "", url,
                                a.TryGetProperty("size", out var size) ? size.GetInt64() : 0,
                                sha is { Length: 64 } ? sha : null);
     }
@@ -156,6 +200,19 @@ public sealed class UpdateService
             if (actual != asset.Sha256)
                 throw new UpdateException($"контрольная сумма {asset.Name} не совпала — файл повреждён или подменён");
         }
+    }
+
+    // Полная причина ошибки: сообщения вложенных исключений («see inner exception» само по себе ничего не говорит)
+    public static string Describe(Exception ex)
+    {
+        if (ex is UpdateException) return ex.Message;
+        var parts = new List<string>();
+        for (var e = ex; e is not null; e = e.InnerException)
+        {
+            var m = e.Message.Replace(" See inner exception.", "").Replace(", see inner exception.", ".").Trim();
+            if (m.Length > 0 && !parts.Contains(m)) parts.Add(m);
+        }
+        return string.Join(" → ", parts);
     }
 
     public static string Sha256Of(string path)

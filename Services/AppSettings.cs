@@ -13,6 +13,13 @@ public sealed class AppSettings
 
     // Обновления
     public bool UpdateDevChannel { get; set; }
+    public string UpdateSource { get; set; } = ""; // server | github; пусто — сервер, если он задан
+
+    [System.Text.Json.Serialization.JsonIgnore]
+    public Services.UpdateSource EffectiveUpdateSource =>
+        UpdateSource == "github" || (UpdateSource != "server" && !AppInfo.HasUpdateServer)
+            ? Services.UpdateSource.GitHub
+            : Services.UpdateSource.Server;
     public string LastUpdateAttempt { get; set; } = "";
     public DateTime LastUpdateAttemptUtc { get; set; }
 

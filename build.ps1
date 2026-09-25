@@ -58,6 +58,10 @@ if ($LASTEXITCODE -ne 0) { Finish 1 "Сборка программы завер�
 Write-Host ""
 Write-Host "[2/3] Подготовка файлов..." -ForegroundColor Cyan
 if (Test-Path "kiosk-profile.default.json") { Copy-Item "kiosk-profile.default.json" publish -Force }
+# Сервер обновлений во внутренней сети: адрес и его корневой сертификат едут внутри установщика
+foreach ($f in "update-server.txt", "update-ca.crt") {
+    if (Test-Path $f) { Copy-Item $f publish -Force; Write-Host "  + $f" }
+}
 Copy-Item "Инструкция.txt" publish -Force
 
 Write-Host ""

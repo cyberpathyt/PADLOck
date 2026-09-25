@@ -84,19 +84,7 @@ $files = @((Resolve-Path $setup).Path) + @($apks | ForEach-Object FullName)
 $files | ForEach-Object { '{0}  {1}' -f (Get-FileHash $_ -Algorithm SHA256).Hash.ToLower(), (Split-Path $_ -Leaf) } |
     Set-Content "dist\SHA256SUMS.txt" -Encoding Ascii
 
-# Публикация
-Write-Host ""
-Write-Host "Публикую $tag в $Repo..." -ForegroundColor Cyan
-$ghArgs = @('release', 'create', $tag) + $files + @('dist\SHA256SUMS.txt',
-    '--repo', $Repo, '--title', "PADLOck $Version", '--notes-file', 'release-notes.md')
-if ($prerelease) { $ghArgs += '--prerelease' }
-& gh @ghArgs
-if ($LASTEXITCODE -ne 0) { Finish 1 "Публикация не выполнена" }
-
-# Описание версии для программ: updates/stable.json и updates/dev.json в репозитории.
-# Программа читает их вместо API GitHub (у API лимит 60 запросов в час на внешний адрес)
-Write-Host ""
-Write-Host "Описание версии для программ..." -ForegroundColor Cyan
+# Описание версии для программ — одно и то же для GitHub и для сервера
 $download = "https://github.com/$Repo/releases/download/$tag"
 function Asset-Info([string]$path) {
     $f = Get-Item $path
@@ -118,27 +106,88 @@ $manifest = [ordered]@{
 }
 $json = $manifest | ConvertTo-Json -Depth 5
 $utf8 = New-Object System.Text.UTF8Encoding($false)
-New-Item -ItemType Directory -Force "updates" | Out-Null
+$results = @()
 
-$changed = @()
-if (-not $prerelease) {
-    [IO.File]::WriteAllText((Join-Path $PSScriptRoot "updates/stable.json"), $json, $utf8)
-    $changed += "updates/stable.json"
+# ---------- 1. Сервер PADLOck Hub (внутренняя сеть) ----------
+# update-server.txt — адрес сервера, update-ca.crt — его корневой сертификат, release-key.txt — ключ API с ролью admin
+# (padlock-hub apikey add releases --role admin). Все три файла в репозиторий не попадают.
+$serverLine = if (Test-Path "update-server.txt") {
+    Get-Content "update-server.txt" | ForEach-Object { $_.Trim() } | Where-Object { $_ -and -not $_.StartsWith('#') } | Select-Object -First 1
 }
-# dev.json — самая новая версия из обоих каналов
-$devPath = Join-Path $PSScriptRoot "updates/dev.json"
-$devVersion = $null
-if (Test-Path $devPath) { try { $devVersion = (Get-Content $devPath -Raw -Encoding UTF8 | ConvertFrom-Json).version } catch { } }
-if (-not $devVersion -or (Compare-SemVer $Version $devVersion) -gt 0) {
-    [IO.File]::WriteAllText($devPath, $json, $utf8)
-    $changed += "updates/dev.json"
+if (-not $serverLine) {
+    $results += "Сервер: не настроен (нет update-server.txt) — пропущен"
+} elseif (-not (Test-Path "update-ca.crt") -or -not (Test-Path "release-key.txt")) {
+    $results += "Сервер: ОШИБКА — рядом с проектом нужны update-ca.crt и release-key.txt"
+} else {
+    $base = if ($serverLine.Contains('://')) { $serverLine.TrimEnd('/') } else { "https://" + $serverLine.TrimEnd('/') }
+    $key = (Get-Content "release-key.txt" -Raw).Trim()
+    $ca = (Resolve-Path "update-ca.crt").Path
+    $answer = Join-Path ([IO.Path]::GetTempPath()) "padlock-upload-answer.txt"
+    # Сертификат сервера выпущен его собственным центром: доверяем ему через --cacert; списка отзыва у него нет
+    function Send-ToServer([string[]]$extra, [string]$url) {
+        $code = & curl.exe --cacert $ca --ssl-no-revoke -sS -o $answer -w "%{http_code}" -H "Authorization: Bearer $key" @extra $url
+        if ($code -ne "200") {
+            Write-Host "  ответ сервера ($code): $(if (Test-Path $answer) { Get-Content $answer -Raw -Encoding UTF8 })" -ForegroundColor Red
+            return $false
+        }
+        return $true
+    }
+
+    Write-Host ""
+    Write-Host "Загрузка на сервер $base ..." -ForegroundColor Cyan
+    $ok = $true
+    foreach ($f in $files) {
+        $name = Split-Path $f -Leaf
+        Write-Host "  $name"
+        if (-not (Send-ToServer @('-X', 'PUT', '--data-binary', "@$f") "$base/api/updates/files/$([uri]::EscapeDataString($name))")) { $ok = $false; break }
+    }
+    if ($ok) {
+        $serverManifest = Join-Path $PSScriptRoot "dist\server-manifest.json"
+        [IO.File]::WriteAllText($serverManifest, $json, $utf8)
+        $ok = Send-ToServer @('-X', 'POST', '-H', 'Content-Type: application/json', '--data-binary', "@$serverManifest") "$base/api/updates/publish"
+    }
+    $results += if ($ok) { "Сервер: опубликовано" } else { "Сервер: ОШИБКА (подробности выше)" }
 }
 
-& git add -- $changed
-& git commit -m "Релиз $tag" -- $changed
-& git push
+# ---------- 2. GitHub ----------
+Write-Host ""
+Write-Host "Публикую $tag в $Repo..." -ForegroundColor Cyan
+$ghArgs = @('release', 'create', $tag) + $files + @('dist\SHA256SUMS.txt',
+    '--repo', $Repo, '--title', "PADLOck $Version", '--notes-file', 'release-notes.md')
+if ($prerelease) { $ghArgs += '--prerelease' }
+& gh @ghArgs
 if ($LASTEXITCODE -ne 0) {
-    Finish 1 "Релиз $tag выложен, но описание версии не отправлено на GitHub (git push).`nИсправьте причину и выполните: git push`nПока описание не отправлено, программы новую версию не увидят."
+    $results += "GitHub: ОШИБКА — релиз не создан"
+} else {
+    # updates/stable.json и dev.json в репозитории — их читают программы с источником «GitHub»
+    New-Item -ItemType Directory -Force "updates" | Out-Null
+    $changed = @()
+    if (-not $prerelease) {
+        [IO.File]::WriteAllText((Join-Path $PSScriptRoot "updates/stable.json"), $json, $utf8)
+        $changed += "updates/stable.json"
+    }
+    # dev.json — самая новая версия из обоих каналов
+    $devPath = Join-Path $PSScriptRoot "updates/dev.json"
+    $devVersion = $null
+    if (Test-Path $devPath) { try { $devVersion = (Get-Content $devPath -Raw -Encoding UTF8 | ConvertFrom-Json).version } catch { } }
+    if (-not $devVersion -or (Compare-SemVer $Version $devVersion) -gt 0) {
+        [IO.File]::WriteAllText($devPath, $json, $utf8)
+        $changed += "updates/dev.json"
+    }
+    if ($changed.Count -gt 0) {
+        & git add -- $changed
+        & git commit -m "Релиз $tag" -- $changed
+        & git push
+    }
+    $results += if ($LASTEXITCODE -eq 0) { "GitHub: опубликовано — https://github.com/$Repo/releases/tag/$tag" }
+                else { "GitHub: релиз создан, но описание версии не отправлено (git push) — выполните git push вручную" }
 }
 
-Finish 0 "Опубликовано: https://github.com/$Repo/releases/tag/$tag`nПрограммы обновятся при следующем запуске. release-notes.md можно очистить для следующей версии."
+Write-Host ""
+$results | ForEach-Object { Write-Host "  $_" }
+$anyOk = @($results | Where-Object { $_ -match 'опубликовано' }).Count -gt 0
+if ($anyOk) {
+    Finish 0 "Готово. Программы обновятся при следующем запуске. release-notes.md можно очистить для следующей версии."
+} else {
+    Finish 1 "Версия никуда не опубликована"
+}
