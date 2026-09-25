@@ -1,0 +1,182 @@
+{
+  "version": 1,
+  "device": "Teclast T60 Ai (Allwinner), Android 15",
+  "packages": {
+    "com.allwinnertech.packageoverride": {
+      "title": "Служебный пакет Allwinner",
+      "category": "critical",
+      "description": "Компонент прошивки Allwinner, управляет настройками пакетов."
+    },
+    "com.clock.pt1.keeptesting": {
+      "title": "Заводской тест",
+      "category": "remove",
+      "description": "Тестовая утилита производителя, в работе не нужна."
+    },
+    "com.cv.tnn": {
+      "title": "AI-библиотека Allwinner",
+      "category": "remove",
+      "description": "Нейросетевая библиотека для AI-демо производителя."
+    },
+    "com.sktl.sktldeviceinfo": {
+      "title": "Сведения об устройстве",
+      "category": "remove",
+      "description": "Утилита сведений от производителя."
+    },
+    "com.softwinner.aiocr": {
+      "title": "AI-распознавание текста",
+      "category": "remove",
+      "description": "OCR-приложение Allwinner."
+    },
+    "com.softwinner.aiocr.config": {
+      "title": "AI-распознавание текста",
+      "category": "remove",
+      "description": "OCR-приложение Allwinner."
+    },
+    "com.softwinner.android.gmsintegration": {
+      "title": "Интеграция GMS Allwinner",
+      "category": "keep",
+      "description": "Связка прошивки с сервисами Google."
+    },
+    "com.softwinner.awaiagingdemo": {
+      "title": "AI-демо Allwinner",
+      "category": "remove",
+      "description": "Демонстрационное приложение производителя."
+    },
+    "com.softwinner.awaidemo": {
+      "title": "AI-демо Allwinner",
+      "category": "remove",
+      "description": "Демонстрационное приложение производителя."
+    },
+    "com.softwinner.awfaceiddemo": {
+      "title": "AI-демо Allwinner",
+      "category": "remove",
+      "description": "Демонстрационное приложение производителя."
+    },
+    "com.softwinner.awlogsettings": {
+      "title": "Логи Allwinner",
+      "category": "optional",
+      "description": "Настройка журналов производителя."
+    },
+    "com.softwinner.awmanager": {
+      "title": "Менеджер Allwinner",
+      "category": "optional",
+      "description": "Служебный менеджер производителя. Назначение не документировано."
+    },
+    "com.softwinner.awposture": {
+      "title": "Контроль осанки",
+      "category": "remove",
+      "description": "AI-функция Allwinner."
+    },
+    "com.softwinner.awposture.config": {
+      "title": "Контроль осанки",
+      "category": "remove",
+      "description": "AI-функция Allwinner."
+    },
+    "com.softwinner.awsysteminfo": {
+      "title": "Сведения о системе Allwinner",
+      "category": "optional",
+      "description": "Информация о прошивке."
+    },
+    "com.softwinner.camera2": {
+      "title": "Камера",
+      "category": "remove",
+      "description": "Приложение камеры."
+    },
+    "com.softwinner.camera2.config": {
+      "title": "Камера",
+      "category": "remove",
+      "description": "Приложение камеры."
+    },
+    "com.softwinner.dragonatt": {
+      "title": "Заводской тест",
+      "category": "remove",
+      "description": "Тестовая утилита производителя, в работе не нужна."
+    },
+    "com.softwinner.miracastReceiver": {
+      "title": "Miracast",
+      "category": "remove",
+      "description": "Приём трансляции экрана."
+    },
+    "com.softwinner.pclauncher": {
+      "title": "Лаунчер Allwinner",
+      "category": "optional",
+      "description": "ПК-лаунчер производителя (уже отключён). Удалять после FreeKiosk.",
+      "requiresKioskHome": true
+    },
+    "com.softwinner.pclauncher.config": {
+      "title": "Настройки лаунчера Allwinner",
+      "category": "keep",
+      "description": "Конфигурация и оверлей лаунчера."
+    },
+    "com.softwinner.pclauncher.system_overlay": {
+      "title": "Настройки лаунчера Allwinner",
+      "category": "keep",
+      "description": "Конфигурация и оверлей лаунчера."
+    },
+    "com.softwinner.qrscanner": {
+      "title": "QR-сканер",
+      "category": "remove",
+      "description": "Сканер QR-кодов Allwinner."
+    },
+    "com.softwinner.screenshot": {
+      "title": "Скриншоты Allwinner",
+      "category": "optional",
+      "description": "Служба снимков экрана производителя."
+    },
+    "com.softwinner.settingssetup": {
+      "title": "Начальные настройки Allwinner",
+      "category": "keep",
+      "description": "Настройки прошивки при первом запуске."
+    },
+    "com.softwinner.theme.icon.circle": {
+      "title": "Темы",
+      "category": "keep",
+      "description": "Системные темы и иконки."
+    },
+    "com.softwinner.theme.icon.square": {
+      "title": "Темы",
+      "category": "keep",
+      "description": "Системные темы и иконки."
+    },
+    "com.softwinner.theme.icon.squircle": {
+      "title": "Темы",
+      "category": "keep",
+      "description": "Системные темы и иконки."
+    },
+    "com.softwinner.theme.icon.teardrop": {
+      "title": "Темы",
+      "category": "keep",
+      "description": "Системные темы и иконки."
+    },
+    "com.softwinner.timerswitch": {
+      "title": "Расписание питания",
+      "category": "optional",
+      "description": "Включение и выключение по таймеру. Может пригодиться киоску."
+    },
+    "com.softwinner.update": {
+      "title": "Обновление прошивки",
+      "category": "remove",
+      "description": "OTA от Allwinner. Обновление может сбросить настройку киоска."
+    },
+    "com.softwinner.videoplayer": {
+      "title": "Видеоплеер",
+      "category": "remove",
+      "description": "Видеоплеер Allwinner."
+    },
+    "com.teclast.custom": {
+      "title": "Teclast Custom",
+      "category": "remove",
+      "description": "Фирменное приложение Teclast."
+    },
+    "com.teclast.teclastuserfeedback": {
+      "title": "Отзывы Teclast",
+      "category": "remove",
+      "description": "Сбор отзывов пользователей Teclast."
+    },
+    "com.teclast.update": {
+      "title": "Обновление Teclast",
+      "category": "remove",
+      "description": "OTA от Teclast. Обновление может сбросить настройку киоска."
+    }
+  }
+}

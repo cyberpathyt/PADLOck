@@ -1,0 +1,1077 @@
+{
+  "version": 1,
+  "device": "Общие пакеты Android, Google и предустановленные приложения",
+  "packages": {
+    "android": {
+      "title": "Система Android",
+      "category": "critical",
+      "description": "Ядро фреймворка. Без него система не загрузится."
+    },
+    "android.auto_generated_characteristics_rro": {
+      "title": "Оверлей ресурсов",
+      "category": "critical",
+      "description": "Автоматически сгенерированные настройки ресурсов прошивки."
+    },
+    "android.auto_generated_rro_product__": {
+      "title": "Оверлей ресурсов",
+      "category": "critical",
+      "description": "Автоматически сгенерированные настройки ресурсов прошивки."
+    },
+    "android.auto_generated_rro_vendor__": {
+      "title": "Оверлей ресурсов",
+      "category": "critical",
+      "description": "Автоматически сгенерированные настройки ресурсов прошивки."
+    },
+    "com.android.DeviceAsWebcam": {
+      "title": "Планшет как веб-камера",
+      "category": "optional",
+      "description": "Режим USB-камеры для ПК."
+    },
+    "com.android.avatarpicker": {
+      "title": "Выбор аватара",
+      "category": "optional",
+      "description": "Выбор картинки профиля пользователя."
+    },
+    "com.android.backupconfirm": {
+      "title": "Резервное копирование",
+      "category": "keep",
+      "description": "Подтверждение резервного копирования."
+    },
+    "com.android.bips": {
+      "title": "Встроенная печать",
+      "category": "optional",
+      "description": "Служба печати по сети. Нужна, если в FreeKiosk включена печать."
+    },
+    "com.android.bluetooth": {
+      "title": "Bluetooth",
+      "category": "keep",
+      "description": "Служба Bluetooth."
+    },
+    "com.android.bluetoothmidiservice": {
+      "title": "Bluetooth MIDI",
+      "category": "optional",
+      "description": "MIDI-устройства по Bluetooth."
+    },
+    "com.android.bookmarkprovider": {
+      "title": "Закладки",
+      "category": "optional",
+      "description": "Провайдер закладок браузера."
+    },
+    "com.android.calculator2": {
+      "title": "Калькулятор",
+      "category": "remove",
+      "description": "Приложение калькулятора."
+    },
+    "com.android.cameraextensions": {
+      "title": "Расширения камеры",
+      "category": "keep",
+      "description": "Системные расширения камеры."
+    },
+    "com.android.carrierconfig": {
+      "title": "Настройки оператора",
+      "category": "keep",
+      "description": "Конфигурация сотовых операторов."
+    },
+    "com.android.certinstaller": {
+      "title": "Сертификаты",
+      "category": "keep",
+      "description": "Установка сертификатов безопасности (нужны для корпоративных сетей)."
+    },
+    "com.android.chrome": {
+      "title": "Google Chrome",
+      "category": "remove",
+      "description": "Браузер. WebView-провайдер отдельный, FreeKiosk от Chrome не зависит."
+    },
+    "com.android.companiondevicemanager": {
+      "title": "Сопряжённые устройства",
+      "category": "keep",
+      "description": "Управление связанными устройствами."
+    },
+    "com.android.companiondevicemanager.auto_generated_characteristics_rro": {
+      "title": "Оверлей ресурсов",
+      "category": "critical",
+      "description": "Автоматически сгенерированные настройки ресурсов прошивки."
+    },
+    "com.android.compos.payload": {
+      "title": "Виртуализация",
+      "category": "keep",
+      "description": "Компоненты защищённой виртуализации Android 15."
+    },
+    "com.android.connectivity.resources.config": {
+      "title": "Конфигурация сети",
+      "category": "critical",
+      "description": "Настройки сетевого стека и связи. Без них пропадёт Wi-Fi."
+    },
+    "com.android.credentialmanager": {
+      "title": "Диспетчер учётных данных",
+      "category": "keep",
+      "description": "Пароли и ключи доступа."
+    },
+    "com.android.cts.ctsshim": {
+      "title": "CTS-заглушка",
+      "category": "keep",
+      "description": "Служебный пакет совместимости Android."
+    },
+    "com.android.cts.priv.ctsshim": {
+      "title": "CTS-заглушка",
+      "category": "keep",
+      "description": "Служебный пакет совместимости Android."
+    },
+    "com.android.customization.themes": {
+      "title": "Темы",
+      "category": "keep",
+      "description": "Системные темы и иконки."
+    },
+    "com.android.devicediagnostics": {
+      "title": "Диагностика",
+      "category": "optional",
+      "description": "Встроенная диагностика устройства."
+    },
+    "com.android.devicelockcontroller": {
+      "title": "Блокировка устройства",
+      "category": "keep",
+      "description": "Служба Device Lock."
+    },
+    "com.android.dreams.basic": {
+      "title": "Заставка",
+      "category": "optional",
+      "description": "Базовая экранная заставка."
+    },
+    "com.android.dreams.phototable": {
+      "title": "Заставка «Фото»",
+      "category": "remove",
+      "description": "Заставка со слайд-шоу фотографий."
+    },
+    "com.android.dynsystem": {
+      "title": "Динамические системы",
+      "category": "optional",
+      "description": "Загрузка тестовых образов Android (DSU)."
+    },
+    "com.android.egg": {
+      "title": "Пасхалка Android",
+      "category": "remove",
+      "description": "Скрытая мини-игра в разделе «О телефоне»."
+    },
+    "com.android.emergency": {
+      "title": "Экстренная информация",
+      "category": "keep",
+      "description": "Экстренные контакты и сведения."
+    },
+    "com.android.externalstorage": {
+      "title": "Внешнее хранилище",
+      "category": "critical",
+      "description": "Провайдер доступа к памяти устройства."
+    },
+    "com.android.htmlviewer": {
+      "title": "Просмотр HTML",
+      "category": "optional",
+      "description": "Просмотрщик HTML-файлов (лицензии и т.п.)."
+    },
+    "com.android.inputdevices": {
+      "title": "Устройства ввода",
+      "category": "keep",
+      "description": "Раскладки физических клавиатур."
+    },
+    "com.android.intentresolver": {
+      "title": "Выбор приложения",
+      "category": "keep",
+      "description": "Системный диалог «Открыть с помощью»."
+    },
+    "com.android.internal.display.cutout.emulation.corner": {
+      "title": "Вырез экрана",
+      "category": "keep",
+      "description": "Эмуляция выреза дисплея (оверлей)."
+    },
+    "com.android.internal.display.cutout.emulation.double": {
+      "title": "Вырез экрана",
+      "category": "keep",
+      "description": "Эмуляция выреза дисплея (оверлей)."
+    },
+    "com.android.internal.display.cutout.emulation.hole": {
+      "title": "Вырез экрана",
+      "category": "keep",
+      "description": "Эмуляция выреза дисплея (оверлей)."
+    },
+    "com.android.internal.display.cutout.emulation.tall": {
+      "title": "Вырез экрана",
+      "category": "keep",
+      "description": "Эмуляция выреза дисплея (оверлей)."
+    },
+    "com.android.internal.display.cutout.emulation.waterfall": {
+      "title": "Вырез экрана",
+      "category": "keep",
+      "description": "Эмуляция выреза дисплея (оверлей)."
+    },
+    "com.android.internal.systemui.navbar.gestural": {
+      "title": "Режим навигации",
+      "category": "critical",
+      "description": "Оверлей навигационной панели."
+    },
+    "com.android.internal.systemui.navbar.threebutton": {
+      "title": "Режим навигации",
+      "category": "critical",
+      "description": "Оверлей навигационной панели."
+    },
+    "com.android.internal.systemui.navbar.transparent": {
+      "title": "Режим навигации",
+      "category": "critical",
+      "description": "Оверлей навигационной панели."
+    },
+    "com.android.keychain": {
+      "title": "Сертификаты",
+      "category": "keep",
+      "description": "Установка сертификатов безопасности (нужны для корпоративных сетей)."
+    },
+    "com.android.launcher3": {
+      "title": "Лаунчер Android",
+      "category": "optional",
+      "description": "Текущий домашний экран. Удалять только после того, как FreeKiosk стал Device Owner.",
+      "requiresKioskHome": true
+    },
+    "com.android.localtransport": {
+      "title": "Резервное копирование",
+      "category": "keep",
+      "description": "Подтверждение резервного копирования."
+    },
+    "com.android.location.fused": {
+      "title": "Геолокация",
+      "category": "keep",
+      "description": "Системная служба определения местоположения."
+    },
+    "com.android.managedprovisioning": {
+      "title": "Настройка управления",
+      "category": "critical",
+      "description": "Нужен для назначения владельца устройства (Device Owner)."
+    },
+    "com.android.microdroid.empty_payload": {
+      "title": "Виртуализация",
+      "category": "keep",
+      "description": "Компоненты защищённой виртуализации Android 15."
+    },
+    "com.android.mms.service": {
+      "title": "SMS и MMS",
+      "category": "keep",
+      "description": "Системные службы сообщений."
+    },
+    "com.android.mtp": {
+      "title": "MTP",
+      "category": "keep",
+      "description": "Передача файлов по USB."
+    },
+    "com.android.musicfx": {
+      "title": "Эквалайзер",
+      "category": "optional",
+      "description": "Звуковые эффекты."
+    },
+    "com.android.networkstack.config": {
+      "title": "Конфигурация сети",
+      "category": "critical",
+      "description": "Настройки сетевого стека и связи. Без них пропадёт Wi-Fi."
+    },
+    "com.android.networkstack.inprocess.config": {
+      "title": "Конфигурация сети",
+      "category": "critical",
+      "description": "Настройки сетевого стека и связи. Без них пропадёт Wi-Fi."
+    },
+    "com.android.nfc": {
+      "title": "NFC",
+      "category": "keep",
+      "description": "Служба NFC (уже отключена)."
+    },
+    "com.android.pacprocessor": {
+      "title": "Прокси",
+      "category": "keep",
+      "description": "Автонастройка и обработка прокси."
+    },
+    "com.android.phone": {
+      "title": "Телефония",
+      "category": "critical",
+      "description": "Системный процесс телефонии. Удаление вызывает циклические перезагрузки."
+    },
+    "com.android.phone.auto_generated_characteristics_rro": {
+      "title": "Оверлей ресурсов",
+      "category": "critical",
+      "description": "Автоматически сгенерированные настройки ресурсов прошивки."
+    },
+    "com.android.printspooler": {
+      "title": "Диспетчер печати",
+      "category": "keep",
+      "description": "Системная печать. Нужен, если в FreeKiosk включена печать."
+    },
+    "com.android.providers.blockednumber": {
+      "title": "Системные провайдеры",
+      "category": "keep",
+      "description": "Хранилища данных (блокировки, календарь, ключи, словарь)."
+    },
+    "com.android.providers.calendar": {
+      "title": "Системные провайдеры",
+      "category": "keep",
+      "description": "Хранилища данных (блокировки, календарь, ключи, словарь)."
+    },
+    "com.android.providers.contactkeys": {
+      "title": "Системные провайдеры",
+      "category": "keep",
+      "description": "Хранилища данных (блокировки, календарь, ключи, словарь)."
+    },
+    "com.android.providers.contacts": {
+      "title": "Провайдер контактов",
+      "category": "critical",
+      "description": "Системная база контактов, от неё зависят другие службы."
+    },
+    "com.android.providers.downloads": {
+      "title": "Менеджер загрузок",
+      "category": "critical",
+      "description": "Системные загрузки. Через него FreeKiosk скачивает обновления."
+    },
+    "com.android.providers.downloads.ui": {
+      "title": "Загрузки (интерфейс)",
+      "category": "optional",
+      "description": "Приложение «Загрузки». Сам менеджер загрузок остаётся."
+    },
+    "com.android.providers.media": {
+      "title": "Медиа-хранилище",
+      "category": "critical",
+      "description": "Индекс файлов и медиа. От него зависит работа с файлами."
+    },
+    "com.android.providers.partnerbookmarks": {
+      "title": "Закладки",
+      "category": "optional",
+      "description": "Провайдер закладок браузера."
+    },
+    "com.android.providers.settings": {
+      "title": "Хранилище настроек",
+      "category": "critical",
+      "description": "Все системные настройки. Без него система не загрузится."
+    },
+    "com.android.providers.telephony": {
+      "title": "Провайдер телефонии",
+      "category": "critical",
+      "description": "База телефонии и APN. Удаление ломает систему."
+    },
+    "com.android.providers.telephony.auto_generated_characteristics_rro": {
+      "title": "Оверлей ресурсов",
+      "category": "critical",
+      "description": "Автоматически сгенерированные настройки ресурсов прошивки."
+    },
+    "com.android.providers.userdictionary": {
+      "title": "Системные провайдеры",
+      "category": "keep",
+      "description": "Хранилища данных (блокировки, календарь, ключи, словарь)."
+    },
+    "com.android.proxyhandler": {
+      "title": "Прокси",
+      "category": "keep",
+      "description": "Автонастройка и обработка прокси."
+    },
+    "com.android.rkpdapp": {
+      "title": "Ключи безопасности",
+      "category": "keep",
+      "description": "Служба аттестации ключей."
+    },
+    "com.android.role.notes.enabled": {
+      "title": "Приложение заметок",
+      "category": "keep",
+      "description": "Роль системы для заметок."
+    },
+    "com.android.se": {
+      "title": "Secure Element",
+      "category": "keep",
+      "description": "Защищённый элемент."
+    },
+    "com.android.server.telecom": {
+      "title": "Служба вызовов",
+      "category": "critical",
+      "description": "Системная служба Telecom."
+    },
+    "com.android.settings": {
+      "title": "Настройки",
+      "category": "critical",
+      "description": "Системные настройки Android. Нужны FreeKiosk и для обслуживания."
+    },
+    "com.android.settings.intelligence": {
+      "title": "Поиск в настройках",
+      "category": "keep",
+      "description": "Поиск и подсказки в Настройках."
+    },
+    "com.android.settings.overlay.icons": {
+      "title": "Темы",
+      "category": "keep",
+      "description": "Системные темы и иконки."
+    },
+    "com.android.sharedstoragebackup": {
+      "title": "Резервное копирование",
+      "category": "keep",
+      "description": "Подтверждение резервного копирования."
+    },
+    "com.android.shell": {
+      "title": "Оболочка (shell)",
+      "category": "critical",
+      "description": "Через него работает adb shell. Без него программа потеряет доступ к планшету."
+    },
+    "com.android.simappdialog": {
+      "title": "Диалог SIM",
+      "category": "keep",
+      "description": "Системный диалог SIM-карты."
+    },
+    "com.android.smspush": {
+      "title": "SMS и MMS",
+      "category": "keep",
+      "description": "Системные службы сообщений."
+    },
+    "com.android.soundpicker": {
+      "title": "Звуки",
+      "category": "keep",
+      "description": "Выбор мелодий и звуков."
+    },
+    "com.android.soundrecorder": {
+      "title": "Диктофон",
+      "category": "remove",
+      "description": "Приложение записи звука."
+    },
+    "com.android.storagemanager": {
+      "title": "Менеджер хранилища",
+      "category": "keep",
+      "description": "Очистка памяти."
+    },
+    "com.android.systemui": {
+      "title": "Системный интерфейс",
+      "category": "critical",
+      "description": "Строка состояния, навигация, экран блокировки. Без него — чёрный экран."
+    },
+    "com.android.systemui.accessibility.accessibilitymenu": {
+      "title": "Меню спецвозможностей",
+      "category": "optional",
+      "description": "Экранное меню спецвозможностей."
+    },
+    "com.android.theme.font.notoserifsource": {
+      "title": "Темы",
+      "category": "keep",
+      "description": "Системные темы и иконки."
+    },
+    "com.android.traceur": {
+      "title": "Трассировка",
+      "category": "optional",
+      "description": "Инструмент отладки производительности."
+    },
+    "com.android.uwb.resources": {
+      "title": "UWB",
+      "category": "keep",
+      "description": "Ресурсы сверхширокополосной связи."
+    },
+    "com.android.vending": {
+      "title": "Google Play Маркет",
+      "category": "optional",
+      "description": "Магазин. Через него обновляется WebView — без него WebView останется старым."
+    },
+    "com.android.virtualmachine.res": {
+      "title": "Виртуализация",
+      "category": "keep",
+      "description": "Компоненты защищённой виртуализации Android 15."
+    },
+    "com.android.vpndialogs": {
+      "title": "VPN",
+      "category": "keep",
+      "description": "Системные диалоги VPN."
+    },
+    "com.android.wallpaper": {
+      "title": "Обои",
+      "category": "optional",
+      "description": "Выбор и обрезка обоев."
+    },
+    "com.android.wallpaper.livepicker": {
+      "title": "Живые обои",
+      "category": "remove",
+      "description": "Выбор анимированных обоев."
+    },
+    "com.android.wallpaperbackup": {
+      "title": "Резервное копирование",
+      "category": "keep",
+      "description": "Подтверждение резервного копирования."
+    },
+    "com.android.wallpapercropper": {
+      "title": "Обои",
+      "category": "optional",
+      "description": "Выбор и обрезка обоев."
+    },
+    "com.android.wifi.resources.config": {
+      "title": "Ресурсы Wi-Fi",
+      "category": "critical",
+      "description": "Настройки модуля Wi-Fi. Без них Wi-Fi не заработает."
+    },
+    "com.freekiosk": {
+      "title": "FreeKiosk",
+      "category": "critical",
+      "description": "Приложение киоска."
+    },
+    "com.google.ambient.streaming": {
+      "title": "Стриминг приложений",
+      "category": "remove",
+      "description": "Трансляция приложений на другие устройства Google."
+    },
+    "com.google.android.accessibility.switchaccess": {
+      "title": "Switch Access",
+      "category": "remove",
+      "description": "Управление внешними переключателями (спецвозможности)."
+    },
+    "com.google.android.adservices.api": {
+      "title": "Реклама и приватность",
+      "category": "keep",
+      "description": "Модуль Privacy Sandbox (Mainline)."
+    },
+    "com.google.android.apps.accessibility.voiceaccess": {
+      "title": "Voice Access",
+      "category": "remove",
+      "description": "Голосовое управление устройством."
+    },
+    "com.google.android.apps.adm": {
+      "title": "Найти устройство",
+      "category": "remove",
+      "description": "Google Find My Device."
+    },
+    "com.google.android.apps.books": {
+      "title": "Google Play Книги",
+      "category": "remove",
+      "description": "Чтение электронных книг."
+    },
+    "com.google.android.apps.carrier.carrierwifi": {
+      "title": "Wi-Fi оператора",
+      "category": "optional",
+      "description": "Автоподключение к Wi-Fi сотового оператора."
+    },
+    "com.google.android.apps.docs": {
+      "title": "Google Диск",
+      "category": "remove",
+      "description": "Облачное хранилище Google."
+    },
+    "com.google.android.apps.googleassistant": {
+      "title": "Google Ассистент",
+      "category": "remove",
+      "description": "Голосовой помощник."
+    },
+    "com.google.android.apps.kids.home": {
+      "title": "Google Kids Space",
+      "category": "remove",
+      "description": "Детский режим Google."
+    },
+    "com.google.android.apps.maps": {
+      "title": "Google Карты",
+      "category": "remove",
+      "description": "Карты и навигация."
+    },
+    "com.google.android.apps.nbu.files": {
+      "title": "Files by Google",
+      "category": "remove",
+      "description": "Файловый менеджер Google."
+    },
+    "com.google.android.apps.photos": {
+      "title": "Google Фото",
+      "category": "remove",
+      "description": "Галерея и облачные фото."
+    },
+    "com.google.android.apps.restore": {
+      "title": "Восстановление данных",
+      "category": "optional",
+      "description": "Перенос данных со старого устройства."
+    },
+    "com.google.android.apps.safetyhub": {
+      "title": "Личная безопасность",
+      "category": "remove",
+      "description": "Google Safety Hub."
+    },
+    "com.google.android.apps.searchlite.overlay": {
+      "title": "Оверлей поиска Google",
+      "category": "remove",
+      "description": "Настройки Google Поиска для лаунчера."
+    },
+    "com.google.android.apps.tachyon": {
+      "title": "Google Meet",
+      "category": "remove",
+      "description": "Видеозвонки (бывший Duo)."
+    },
+    "com.google.android.apps.turbo": {
+      "title": "Здоровье устройства",
+      "category": "optional",
+      "description": "Оптимизация батареи Google (Device Health Services)."
+    },
+    "com.google.android.apps.wellbeing": {
+      "title": "Цифровое благополучие",
+      "category": "optional",
+      "description": "Статистика использования и родительский контроль."
+    },
+    "com.google.android.apps.youtube.kids": {
+      "title": "YouTube Kids",
+      "category": "remove",
+      "description": "Детский YouTube."
+    },
+    "com.google.android.apps.youtube.music": {
+      "title": "YouTube Music",
+      "category": "remove",
+      "description": "Музыкальный сервис."
+    },
+    "com.google.android.appsearch.apk": {
+      "title": "Поиск в приложениях",
+      "category": "keep",
+      "description": "Системный индекс AppSearch."
+    },
+    "com.google.android.as": {
+      "title": "Системный интеллект",
+      "category": "optional",
+      "description": "Android System Intelligence: подсказки, субтитры."
+    },
+    "com.google.android.as.oss": {
+      "title": "Системный интеллект",
+      "category": "optional",
+      "description": "Android System Intelligence: подсказки, субтитры."
+    },
+    "com.google.android.calendar": {
+      "title": "Google Календарь",
+      "category": "remove",
+      "description": "Календарь."
+    },
+    "com.google.android.captiveportallogin": {
+      "title": "Вход в Wi-Fi",
+      "category": "keep",
+      "description": "Страницы авторизации в Wi-Fi-сетях. Нужен для гостевых сетей."
+    },
+    "com.google.android.cellbroadcastreceiver": {
+      "title": "Экстренные оповещения",
+      "category": "keep",
+      "description": "Оповещения МЧС."
+    },
+    "com.google.android.cellbroadcastservice": {
+      "title": "Экстренные оповещения",
+      "category": "keep",
+      "description": "Оповещения МЧС."
+    },
+    "com.google.android.configupdater": {
+      "title": "Обновление конфигурации",
+      "category": "keep",
+      "description": "Обновление сертификатов и правил безопасности."
+    },
+    "com.google.android.connectivity.resources": {
+      "title": "Конфигурация сети",
+      "category": "critical",
+      "description": "Настройки сетевого стека и связи. Без них пропадёт Wi-Fi."
+    },
+    "com.google.android.connectivity.resources.config": {
+      "title": "Конфигурация сети",
+      "category": "critical",
+      "description": "Настройки сетевого стека и связи. Без них пропадёт Wi-Fi."
+    },
+    "com.google.android.contacts": {
+      "title": "Контакты Google",
+      "category": "remove",
+      "description": "Приложение контактов (база контактов остаётся)."
+    },
+    "com.google.android.deskclock": {
+      "title": "Часы",
+      "category": "remove",
+      "description": "Будильник, таймер, секундомер."
+    },
+    "com.google.android.documentsui": {
+      "title": "Файлы (DocumentsUI)",
+      "category": "critical",
+      "description": "Системный выбор файлов. Через него FreeKiosk импортирует и экспортирует настройки."
+    },
+    "com.google.android.ext.services": {
+      "title": "Службы расширений",
+      "category": "critical",
+      "description": "Базовые службы модулей Android."
+    },
+    "com.google.android.ext.shared": {
+      "title": "Службы расширений",
+      "category": "critical",
+      "description": "Базовые службы модулей Android."
+    },
+    "com.google.android.federatedcompute": {
+      "title": "Реклама и приватность",
+      "category": "keep",
+      "description": "Модуль Privacy Sandbox (Mainline)."
+    },
+    "com.google.android.feedback": {
+      "title": "Отзывы Google",
+      "category": "remove",
+      "description": "Отправка отзывов о приложениях в Google."
+    },
+    "com.google.android.gm": {
+      "title": "Gmail",
+      "category": "remove",
+      "description": "Почтовый клиент."
+    },
+    "com.google.android.gms": {
+      "title": "Сервисы Google Play",
+      "category": "keep",
+      "description": "GMS. Удаление на этой прошивке непредсказуемо."
+    },
+    "com.google.android.gms.location.history": {
+      "title": "История местоположений",
+      "category": "remove",
+      "description": "Хронология Google."
+    },
+    "com.google.android.gms.supervision": {
+      "title": "Родительский контроль",
+      "category": "keep",
+      "description": "Google Family Link (уже отключён)."
+    },
+    "com.google.android.go.networkstack.config": {
+      "title": "Конфигурация сети",
+      "category": "critical",
+      "description": "Настройки сетевого стека и связи. Без них пропадёт Wi-Fi."
+    },
+    "com.google.android.googlequicksearchbox": {
+      "title": "Google Поиск",
+      "category": "remove",
+      "description": "Приложение Google."
+    },
+    "com.google.android.gsf": {
+      "title": "Сервисы Google Play",
+      "category": "keep",
+      "description": "GMS. Удаление на этой прошивке непредсказуемо."
+    },
+    "com.google.android.health.connect.backuprestore": {
+      "title": "Health Connect",
+      "category": "keep",
+      "description": "Модуль данных о здоровье (Mainline)."
+    },
+    "com.google.android.healthconnect.controller": {
+      "title": "Health Connect",
+      "category": "keep",
+      "description": "Модуль данных о здоровье (Mainline)."
+    },
+    "com.google.android.hotspot2.osulogin": {
+      "title": "Вход в Wi-Fi",
+      "category": "keep",
+      "description": "Страницы авторизации в Wi-Fi-сетях. Нужен для гостевых сетей."
+    },
+    "com.google.android.inputmethod.latin": {
+      "title": "Gboard",
+      "category": "keep",
+      "description": "Экранная клавиатура. Единственная на устройстве."
+    },
+    "com.google.android.keep": {
+      "title": "Google Keep",
+      "category": "remove",
+      "description": "Заметки."
+    },
+    "com.google.android.marvin.talkback": {
+      "title": "TalkBack",
+      "category": "optional",
+      "description": "Экранный диктор для незрячих."
+    },
+    "com.google.android.modulemetadata": {
+      "title": "Метаданные модулей",
+      "category": "critical",
+      "description": "Сведения о системных модулях Mainline."
+    },
+    "com.google.android.networkstack": {
+      "title": "Конфигурация сети",
+      "category": "critical",
+      "description": "Настройки сетевого стека и связи. Без них пропадёт Wi-Fi."
+    },
+    "com.google.android.networkstack.config": {
+      "title": "Конфигурация сети",
+      "category": "critical",
+      "description": "Настройки сетевого стека и связи. Без них пропадёт Wi-Fi."
+    },
+    "com.google.android.networkstack.tethering": {
+      "title": "Конфигурация сети",
+      "category": "critical",
+      "description": "Настройки сетевого стека и связи. Без них пропадёт Wi-Fi."
+    },
+    "com.google.android.networkstack.tethering.config": {
+      "title": "Конфигурация сети",
+      "category": "critical",
+      "description": "Настройки сетевого стека и связи. Без них пропадёт Wi-Fi."
+    },
+    "com.google.android.odad": {
+      "title": "Play Защита (ODAD)",
+      "category": "optional",
+      "description": "Служба проверки приложений Google."
+    },
+    "com.google.android.ondevicepersonalization.services": {
+      "title": "Реклама и приватность",
+      "category": "keep",
+      "description": "Модуль Privacy Sandbox (Mainline)."
+    },
+    "com.google.android.onetimeinitializer": {
+      "title": "Первичная инициализация",
+      "category": "keep",
+      "description": "Служебный пакет первого запуска."
+    },
+    "com.google.android.overlay.gmsconfig.asi": {
+      "title": "Конфигурация GMS",
+      "category": "keep",
+      "description": "Оверлей настроек сервисов Google."
+    },
+    "com.google.android.overlay.gmsconfig.common": {
+      "title": "Конфигурация GMS",
+      "category": "keep",
+      "description": "Оверлей настроек сервисов Google."
+    },
+    "com.google.android.overlay.gmsconfig.comms": {
+      "title": "Конфигурация GMS",
+      "category": "keep",
+      "description": "Оверлей настроек сервисов Google."
+    },
+    "com.google.android.overlay.gmsconfig.geotz": {
+      "title": "Конфигурация GMS",
+      "category": "keep",
+      "description": "Оверлей настроек сервисов Google."
+    },
+    "com.google.android.overlay.gmsconfig.gsa": {
+      "title": "Конфигурация GMS",
+      "category": "keep",
+      "description": "Оверлей настроек сервисов Google."
+    },
+    "com.google.android.overlay.gmsconfig.personalsafety": {
+      "title": "Конфигурация GMS",
+      "category": "keep",
+      "description": "Оверлей настроек сервисов Google."
+    },
+    "com.google.android.overlay.gmsconfig.photos": {
+      "title": "Конфигурация GMS",
+      "category": "keep",
+      "description": "Оверлей настроек сервисов Google."
+    },
+    "com.google.android.overlay.gmsconfig.searchlauncherqs": {
+      "title": "Конфигурация GMS",
+      "category": "keep",
+      "description": "Оверлей настроек сервисов Google."
+    },
+    "com.google.android.overlay.modules.captiveportallogin.forframework": {
+      "title": "Оверлей модулей",
+      "category": "critical",
+      "description": "Настройки системных модулей."
+    },
+    "com.google.android.overlay.modules.documentsui": {
+      "title": "Оверлей модулей",
+      "category": "critical",
+      "description": "Настройки системных модулей."
+    },
+    "com.google.android.overlay.modules.ext.services": {
+      "title": "Оверлей модулей",
+      "category": "critical",
+      "description": "Настройки системных модулей."
+    },
+    "com.google.android.overlay.modules.healthfitness.forframework": {
+      "title": "Оверлей модулей",
+      "category": "critical",
+      "description": "Настройки системных модулей."
+    },
+    "com.google.android.overlay.modules.modulemetadata.forframework": {
+      "title": "Оверлей модулей",
+      "category": "critical",
+      "description": "Настройки системных модулей."
+    },
+    "com.google.android.overlay.modules.permissioncontroller": {
+      "title": "Оверлей модулей",
+      "category": "critical",
+      "description": "Настройки системных модулей."
+    },
+    "com.google.android.overlay.modules.permissioncontroller.forframework": {
+      "title": "Оверлей модулей",
+      "category": "critical",
+      "description": "Настройки системных модулей."
+    },
+    "com.google.android.packageinstaller": {
+      "title": "Установщик пакетов",
+      "category": "critical",
+      "description": "Установка и удаление приложений. Нужен для обновлений FreeKiosk."
+    },
+    "com.google.android.packageinstaller.overlay": {
+      "title": "Установщик пакетов",
+      "category": "critical",
+      "description": "Установка и удаление приложений. Нужен для обновлений FreeKiosk."
+    },
+    "com.google.android.partnersetup": {
+      "title": "Партнёрская настройка",
+      "category": "keep",
+      "description": "Служебный пакет Google для производителя."
+    },
+    "com.google.android.permissioncontroller": {
+      "title": "Разрешения",
+      "category": "critical",
+      "description": "Управление разрешениями приложений."
+    },
+    "com.google.android.play.games": {
+      "title": "Google Play Игры",
+      "category": "remove",
+      "description": "Игровой сервис."
+    },
+    "com.google.android.printservice.recommendation": {
+      "title": "Рекомендации печати",
+      "category": "optional",
+      "description": "Подсказки служб печати."
+    },
+    "com.google.android.providers.media.module": {
+      "title": "Медиа-хранилище",
+      "category": "critical",
+      "description": "Индекс файлов и медиа. От него зависит работа с файлами."
+    },
+    "com.google.android.safetycenter.resources": {
+      "title": "Центр безопасности",
+      "category": "keep",
+      "description": "Ресурсы Safety Center."
+    },
+    "com.google.android.sdksandbox": {
+      "title": "Реклама и приватность",
+      "category": "keep",
+      "description": "Модуль Privacy Sandbox (Mainline)."
+    },
+    "com.google.android.server.deviceconfig.resources": {
+      "title": "Конфигурация устройства",
+      "category": "critical",
+      "description": "Ресурсы серверной конфигурации системы."
+    },
+    "com.google.android.setupwizard": {
+      "title": "Мастер настройки",
+      "category": "critical",
+      "description": "Первоначальная настройка. Удаление может заблокировать загрузку."
+    },
+    "com.google.android.tag": {
+      "title": "NFC-метки",
+      "category": "remove",
+      "description": "Просмотр NFC-меток."
+    },
+    "com.google.android.tts": {
+      "title": "Синтез речи Google",
+      "category": "keep",
+      "description": "Озвучивание текста. Используется TTS-функциями FreeKiosk."
+    },
+    "com.google.android.videos": {
+      "title": "Google TV",
+      "category": "remove",
+      "description": "Фильмы и сериалы."
+    },
+    "com.google.android.webview": {
+      "title": "Android WebView",
+      "category": "critical",
+      "description": "Движок веб-страниц. На нём работает FreeKiosk в режиме сайта."
+    },
+    "com.google.android.wifi.dialog": {
+      "title": "Диалог Wi-Fi",
+      "category": "keep",
+      "description": "Системные диалоги Wi-Fi."
+    },
+    "com.google.android.wifi.resources": {
+      "title": "Ресурсы Wi-Fi",
+      "category": "critical",
+      "description": "Настройки модуля Wi-Fi. Без них Wi-Fi не заработает."
+    },
+    "com.google.android.wifi.resources.config": {
+      "title": "Ресурсы Wi-Fi",
+      "category": "critical",
+      "description": "Настройки модуля Wi-Fi. Без них Wi-Fi не заработает."
+    },
+    "com.google.android.youtube": {
+      "title": "YouTube",
+      "category": "remove",
+      "description": "Видеосервис."
+    },
+    "com.google.mainline.adservices": {
+      "title": "Реклама и приватность",
+      "category": "keep",
+      "description": "Модуль Privacy Sandbox (Mainline)."
+    },
+    "com.google.mainline.telemetry": {
+      "title": "Телеметрия модулей",
+      "category": "keep",
+      "description": "Служебный модуль Mainline."
+    },
+    "com.kms.free": {
+      "title": "Kaspersky",
+      "category": "remove",
+      "description": "Антивирус Касперского."
+    },
+    "com.ncloudtech.cloudoffice": {
+      "title": "МойОфис",
+      "category": "remove",
+      "description": "Офисный пакет."
+    },
+    "com.vk.im": {
+      "title": "VK Мессенджер",
+      "category": "remove",
+      "description": "Мессенджер VK."
+    },
+    "com.vkontakte.android": {
+      "title": "ВКонтакте",
+      "category": "remove",
+      "description": "Соцсеть."
+    },
+    "com.yandex.browser": {
+      "title": "Яндекс Браузер",
+      "category": "remove",
+      "description": "Браузер."
+    },
+    "com.yandex.searchapp": {
+      "title": "Яндекс с Алисой",
+      "category": "remove",
+      "description": "Поиск и голосовой помощник."
+    },
+    "ru.crptech.mark": {
+      "title": "Честный ЗНАК",
+      "category": "remove",
+      "description": "Проверка маркировки товаров."
+    },
+    "ru.dublgis.dgismobile": {
+      "title": "2ГИС",
+      "category": "remove",
+      "description": "Карты и справочник."
+    },
+    "ru.litres.android": {
+      "title": "Литрес",
+      "category": "remove",
+      "description": "Электронные книги."
+    },
+    "ru.mail.mailapp": {
+      "title": "Почта Mail",
+      "category": "remove",
+      "description": "Почтовый клиент."
+    },
+    "ru.mail.search.electroscope": {
+      "title": "Маруся",
+      "category": "remove",
+      "description": "Голосовой помощник VK."
+    },
+    "ru.nspk.mirpay": {
+      "title": "Mir Pay",
+      "category": "remove",
+      "description": "Платёжный сервис."
+    },
+    "ru.ok.android": {
+      "title": "Одноклассники",
+      "category": "remove",
+      "description": "Соцсеть."
+    },
+    "ru.rostel": {
+      "title": "Госуслуги",
+      "category": "remove",
+      "description": "Портал госуслуг."
+    },
+    "ru.rutube.app": {
+      "title": "RUTUBE",
+      "category": "remove",
+      "description": "Видеосервис."
+    },
+    "ru.vk.store": {
+      "title": "RuStore",
+      "category": "remove",
+      "description": "Магазин приложений."
+    },
+    "ru.yandex.disk": {
+      "title": "Яндекс Диск",
+      "category": "remove",
+      "description": "Облачное хранилище."
+    },
+    "ru.yandex.yandexmaps": {
+      "title": "Яндекс Карты",
+      "category": "remove",
+      "description": "Карты и навигация."
+    },
+    "ru.zen.android": {
+      "title": "Дзен",
+      "category": "remove",
+      "description": "Лента контента."
+    }
+  }
+}

@@ -1,0 +1,13 @@
+# Сборка
+bin/
+obj/
+publish/
+dist/
+.vs/
+*.user
+
+# APK FreeKiosk не хранится в репозитории — он выкладывается в релиз (release.bat)
+kiosk/*.apk
+
+# Профиль по умолчанию может содержать адреса и пароли конкретного объекта
+kiosk-profile.default.json
