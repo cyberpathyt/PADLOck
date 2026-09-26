@@ -1,14 +1,19 @@
 {
-    "version":  "1.1.4",
-    "tag":  "v1.1.4",
+    "version":  "1.1.5",
+    "tag":  "v1.1.5",
     "prerelease":  false,
-    "notes":  "25.09\r\nДобавление второстепенного сервера обновления, так как git периодически заблочен. \r\nИнтеграция с PADLOhub\r\n\r\nGLHF бедолаги",
-    "page":  "https://github.com/cyberpathyt/PADLOck/releases/tag/v1.1.4",
+    "notes":  "26.09\r\nДобавлена возможность отключить сетевую гибернацию",
+    "page":  "https://github.com/cyberpathyt/PADLOck/releases/tag/v1.1.5",
     "installer":  {
-                      "name":  "PADLOck-Setup-1.1.4.exe",
-                      "url":  "https://github.com/cyberpathyt/PADLOck/releases/download/v1.1.4/PADLOck-Setup-1.1.4.exe",
-                      "size":  49839453,
-                      "sha256":  "db58c16bbeffe98d201a163f54a753815e10dff5def2d0733cfa6b134edcabbe"
+                      "name":  "PADLOck-Setup-1.1.5.exe",
+                      "url":  "https://github.com/cyberpathyt/PADLOck/releases/download/v1.1.5/PADLOck-Setup-1.1.5.exe",
+                      "size":  49846891,
+                      "sha256":  "e366e9f471985b8c143d4b8076ff07c485a36862b6e083054ec48fcde7c2997f"
                   },
-    "apk":  null
+    "apk":  {
+                "name":  "freekiosk-v2.0.0-beta.3.apk",
+                "url":  "https://github.com/cyberpathyt/PADLOck/releases/download/v1.1.5/freekiosk-v2.0.0-beta.3.apk",
+                "size":  62907825,
+                "sha256":  "77bd4d1ba70a7c63999c58ca30b4e72883c0375aa17b33843ed02c2b24391d6b"
+            }
 }
